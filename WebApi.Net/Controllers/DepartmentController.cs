@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using WebApi.Net.Models;
 using WebApi.Net.Repositories;
+using Microsoft.EntityFrameworkCore;
+using WebApi.Net.DTO;
 
 namespace WebApi.Net.Controllers
 {
@@ -47,7 +49,7 @@ namespace WebApi.Net.Controllers
         [HttpPut("{id:int}")]
         public IActionResult UpdateDept(int id ,Department deptold)
         {
-                Department dept=_departmentRepository.GetById(id);
+            Department dept=_departmentRepository.GetById(id);
             if (deptold != null)
             {
                 dept.Name = deptold.Name;
@@ -59,6 +61,28 @@ namespace WebApi.Net.Controllers
             return NotFound();
             }
         }
+
+        [HttpGet("Count")]
+        public ActionResult<List<DeptWithEmpCountDTO>> GetDeptDetails()
+        {
+          IEnumerable<Department> deptList = _departmentRepository.DisplayAll();
+            List<DeptWithEmpCountDTO> deptDto =new List<DeptWithEmpCountDTO>();
+            foreach (Department dept in deptList) { 
+            DeptWithEmpCountDTO db =new DeptWithEmpCountDTO();
+                db.Id = dept.Id;
+                db.Name = dept.Name;
+                db.EmpCount = dept.Emps.Count();
+                deptDto.Add(db);
+            }
+            //IEnumerable<DeptWithEmpCountDTO> deptWithEmpCountDTOs = _departmentRepository.DisplayAll().Select(x => new DeptWithEmpCountDTO
+            //{
+            //    Id = x.Id,
+            //    Name = x.Name,
+            //    EmpCount = x.Emps.Count(),
+            //});
+            return deptDto;
+        }
+
 
     }
 }

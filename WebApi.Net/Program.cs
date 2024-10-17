@@ -18,6 +18,17 @@ namespace WebApi.Net
             builder.Services.AddDbContext<ITIContext>(options =>
             options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
             
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("MyPolicy", policy =>
+                {
+                    policy.AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader();
+                });
+            });
+
+
             builder.Services.AddScoped<IDepartmentRepository,DepartmentRepository>();
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -34,7 +45,9 @@ namespace WebApi.Net
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+            app.UseStaticFiles();
 
+            app.UseCors("MyPolicy");
             app.UseAuthorization();
 
 

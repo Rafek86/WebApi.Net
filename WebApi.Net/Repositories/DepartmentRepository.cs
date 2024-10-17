@@ -1,4 +1,5 @@
-﻿using WebApi.Net.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using WebApi.Net.Models;
 
 namespace WebApi.Net.Repositories
 {
@@ -13,7 +14,7 @@ namespace WebApi.Net.Repositories
 
         public IEnumerable<Department> DisplayAll()
         {
-            return _context.Department.ToList();
+            return _context.Department.Include(d=>d.Emps).ToList();
         }
 
         public void AddDept(Department department)

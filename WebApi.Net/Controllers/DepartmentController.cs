@@ -4,6 +4,7 @@ using WebApi.Net.Models;
 using WebApi.Net.Repositories;
 using Microsoft.EntityFrameworkCore;
 using WebApi.Net.DTO;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WebApi.Net.Controllers
 {
@@ -63,6 +64,7 @@ namespace WebApi.Net.Controllers
         }
 
         [HttpGet("Count")]
+        [Authorize]
         public ActionResult<List<DeptWithEmpCountDTO>> GetDeptDetails()
         {
           IEnumerable<Department> deptList = _departmentRepository.DisplayAll();

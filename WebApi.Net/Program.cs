@@ -1,8 +1,11 @@
 
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using WebApi.Net.Models;
 using WebApi.Net.Repositories;
-
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 namespace WebApi.Net
 {
     public class Program
@@ -27,7 +30,27 @@ namespace WebApi.Net
                     .AllowAnyHeader();
                 });
             });
+            
+            builder.Services.AddAuthentication(
+                option => { 
+                option.DefaultAuthenticateScheme=JwtBearerDefaults.AuthenticationScheme;
+                    option.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                    option.DefaultScheme =JwtBearerDefaults.AuthenticationScheme;
+                }).AddJwtBearer(option => {
+                    option.SaveToken = true;
+                    option.RequireHttpsMetadata = false;
+                    option.TokenValidationParameters = new TokenValidationParameters() 
+                    {
+                     ValidateIssuer = true,
+                     ValidIssuer= "http://localhost:5073/",
+                     ValidateAudience = true,
+                     ValidAudience = "http://localhost:4200/",
+                     IssuerSigningKey= new SymmetricSecurityKey(Encoding.UTF8.GetBytes("StrongStringForSignature%$#@"))
+                    };
+                });
 
+            builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+                .AddEntityFrameworkStores<ITIContext>();
 
             builder.Services.AddScoped<IDepartmentRepository,DepartmentRepository>();
 
